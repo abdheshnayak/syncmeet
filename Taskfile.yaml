@@ -1,0 +1,28 @@
+version: '3'
+
+dotenv: ['.secrets/env']
+
+tasks:
+  default:
+    cmds:
+      - nodemon -q -e go --signal SIGTERM --exec "task build:run"
+  build:run:
+    cmds:
+      - task: build
+      - task: run
+
+  build:
+    cmds:
+      - go build -o .bin/syncmeet .
+
+  run:
+    cmds:
+      - .bin/syncmeet
+
+  cont:build:
+    cmds:
+      - docker build . -t syncmeet:latest
+  cont:run:
+    cmds:
+      - docker run -it --rm --init --env-file .secrets/env -p 3000:3000 syncmeet:latest 
+
